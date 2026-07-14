@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: collectors-crown-server
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build --workspace=server
+    startCommand: npm run start --workspace=server
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.11.0
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: collectors-crown-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: collectors-crown-redis
+          property: connectionString
+
+  - type: keyvalue
+    name: collectors-crown-redis
+    plan: free
+    ipAllowList: []
+
+databases:
+  - name: collectors-crown-db
+    plan: free

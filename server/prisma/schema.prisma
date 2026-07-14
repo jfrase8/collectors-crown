@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Placeholder models — expanded once the game rules are defined.
+// Redis holds live in-game state; Postgres holds durable records.
+
+model Game {
+  id        String   @id @default(cuid())
+  phase     String   @default("lobby")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  players   Player[]
+}
+
+model Player {
+  id        String   @id @default(cuid())
+  name      String
+  gameId    String
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([gameId])
+}
