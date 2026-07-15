@@ -11,6 +11,7 @@ import { Server } from "socket.io";
 import { env } from "./env.js";
 import { redis } from "./redis.js";
 import { registerGameHandlers } from "./socket/game-handlers.js";
+import { registerLobbyHandlers } from "./socket/lobby-handlers.js";
 
 const app = express();
 app.use(cors({ origin: env.clientOrigins }));
@@ -36,6 +37,7 @@ const io: GameServer = new Server(httpServer, {
 io.on("connection", (socket) => {
   console.log(`[socket] connected: ${socket.id}`);
   registerGameHandlers(io, socket);
+  registerLobbyHandlers(io, socket);
 
   socket.on("disconnect", (reason) => {
     console.log(`[socket] disconnected: ${socket.id} (${reason})`);
