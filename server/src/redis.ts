@@ -7,5 +7,5 @@ export const redis = new Redis(env.redisUrl, {
 });
 
 redis.on("error", (err) => {
-  console.error("[redis] error:", err.message);
+  console.error("[redis] error:", err);
 });
