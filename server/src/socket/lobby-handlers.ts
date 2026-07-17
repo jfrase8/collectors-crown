@@ -1,8 +1,10 @@
 import { randomUUID } from "node:crypto";
 import {
+  createGame,
   MAX_LOBBY_PLAYERS,
   MAX_NAME_LENGTH,
   MIN_PLAYERS_TO_START,
+  toSnapshot,
   type ClientToServerEvents,
   type InterServerEvents,
   type LobbyState,
@@ -10,6 +12,7 @@ import {
   type SocketData,
 } from "@collectors-crown/shared";
 import type { Server, Socket } from "socket.io";
+import { saveGame } from "../game/store.js";
 import { deleteLobby, getLobby, listLobbies, reserveLobbyName, saveLobby } from "../lobby/store.js";
 
 type GameServer = Server<
@@ -145,11 +148,20 @@ export function registerLobbyHandlers(io: GameServer, socket: GameSocket) {
       if (lobby.phase !== "waiting")
         return ack({ ok: false, error: "The game has already started." });
 
+      // The game id is the lobby id; the game reuses the lobby's socket room.
+      const game = createGame(
+        lobby.id,
+        lobby.players.map((p) => ({ id: p.id, name: p.name })),
+        Date.now() >>> 0,
+      );
+      await saveGame(game);
+
       lobby.phase = "in_progress";
       await saveLobby(lobby);
 
       ack({ ok: true });
       io.to(lobbyRoom(lobby.id)).emit("lobby:state", lobby);
+      io.to(lobbyRoom(lobby.id)).emit("game:state", toSnapshot(game));
       await broadcastLobbyList(io);
     } catch (err) {
       console.error("[lobby] start failed:", err);
@@ -176,6 +188,18 @@ async function leaveCurrentLobby(io: GameServer, socket: GameSocket) {
   try {
     const lobby = await getLobby(lobbyId);
     if (!lobby) return;
+
+    if (lobby.phase === "in_progress") {
+      // Never remove players from a running game — mark them disconnected so
+      // they can rejoin later (reconnect flow not implemented yet).
+      const player = lobby.players.find((p) => p.id === playerId);
+      if (player) {
+        player.connected = false;
+        await saveLobby(lobby);
+        io.to(lobbyRoom(lobby.id)).emit("lobby:state", lobby);
+      }
+      return;
+    }
 
     lobby.players = lobby.players.filter((p) => p.id !== playerId);
 

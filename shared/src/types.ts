@@ -14,7 +14,7 @@ export interface PlayerInfo {
 
 export type LobbyId = string;
 
-export const MAX_LOBBY_PLAYERS = 4;
+export const MAX_LOBBY_PLAYERS = 5;
 export const MIN_PLAYERS_TO_START = 3;
 export const MAX_NAME_LENGTH = 24;
 
@@ -38,11 +38,3 @@ export interface LobbySummary {
   phase: LobbyPhase;
 }
 
-export interface GameStateSnapshot {
-  gameId: GameId;
-  phase: GamePhase;
-  players: PlayerInfo[];
-  /** Index into `players` of whose turn it is. */
-  currentTurn: number;
-  turnNumber: number;
-}

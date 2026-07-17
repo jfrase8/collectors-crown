@@ -1,1 +1,117 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "EB Garamond", ui-serif, Georgia, serif;
+  --font-display: "Cinzel", ui-serif, Georgia, serif;
+
+  --color-primary: oklch(0.6503 0.1057 43.36);
+  --color-primary-hover: oklch(0.4917 0.0811 18.32);
+  --color-on-primary: oklch(0.21 0.02 310);
+  --color-background: oklch(0.18 0.006 310);
+  --color-surface: oklch(0.22 0.007 310);
+  --color-border: oklch(0.33 0.011 310);
+  --color-secondary: oklch(0.78 0.013 310);
+
+  /* Tier metals: I copper, II pewter, III gold. */
+  --color-tier1: oklch(0.65 0.1 43);
+  --color-tier2: oklch(0.75 0.02 270);
+  --color-tier3: oklch(0.82 0.13 88);
+
+  --animate-lot-reveal: lot-reveal 0.45s ease both;
+  --animate-drawer-in: drawer-in 0.2s ease both;
+  --animate-drawer-out: drawer-out 0.15s ease both;
+  --animate-fade-in: fade-in 0.2s ease both;
+  --animate-fade-out: fade-out 0.15s ease both;
+}
+
+@keyframes lot-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes drawer-out {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+
+  body {
+    user-select: none;
+  }
+
+  input,
+  textarea {
+    user-select: text;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}

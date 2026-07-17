@@ -1,29 +1,27 @@
+import type { GameAction, GameSnapshot } from "./game/types.js";
 import type {
   GameId,
-  GameStateSnapshot,
   LobbyId,
   LobbyState,
   LobbySummary,
   PlayerId,
-  PlayerInfo,
 } from "./types.js";
 
 // Typed Socket.IO event maps, shared by client and server.
-// Expanded once the game rules are defined.
 
 export type LobbyJoinResult =
   | { ok: true; lobby: LobbyState; playerId: PlayerId }
   | { ok: false; error: string };
+
+export type Ack = (res: { ok: true } | { ok: false; error: string }) => void;
 
 export interface ServerToClientEvents {
   /** Sent to sockets browsing the lobby list whenever any lobby changes. */
   "lobby:list": (lobbies: LobbySummary[]) => void;
   /** Sent to lobby members whenever their lobby changes. */
   "lobby:state": (state: LobbyState) => void;
-  "game:state": (state: GameStateSnapshot) => void;
-  "game:player_joined": (player: PlayerInfo) => void;
-  "game:player_left": (playerId: PlayerId) => void;
-  "game:turn_changed": (currentTurn: number, turnNumber: number) => void;
+  /** Full public game state, sent to game members after every action. */
+  "game:state": (state: GameSnapshot) => void;
   "game:error": (message: string) => void;
 }
 
@@ -41,17 +39,12 @@ export interface ClientToServerEvents {
     ack: (res: LobbyJoinResult) => void,
   ) => void;
   "lobby:leave": () => void;
-  "lobby:start": (ack: (res: { ok: true } | { ok: false; error: string }) => void) => void;
-  "game:create": (
-    playerName: string,
-    ack: (res: { gameId: GameId; playerId: PlayerId }) => void,
-  ) => void;
-  "game:join": (
-    gameId: GameId,
-    playerName: string,
-    ack: (res: { ok: true; playerId: PlayerId } | { ok: false; error: string }) => void,
-  ) => void;
-  "game:end_turn": () => void;
+  /** Host only: starts the game for the lobby. */
+  "lobby:start": (ack: Ack) => void;
+  /** Perform a game action; state is broadcast via game:state on success. */
+  "game:action": (action: GameAction, ack: Ack) => void;
+  /** Re-fetch the current game state (e.g. after a reconnect). */
+  "game:get_state": (ack: (state: GameSnapshot | null) => void) => void;
 }
 
 export interface InterServerEvents {}
