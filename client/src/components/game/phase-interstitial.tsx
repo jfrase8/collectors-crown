@@ -29,7 +29,7 @@ export function PhaseInterstitial({ interstitial, onDone }: PhaseInterstitialPro
     >
       {interstitial.kind === "income" ? (
         <>
-          <p className="text-sm tracking-[0.25em] text-secondary/70 uppercase">
+          <p className="text-sm tracking-[0.25em] text-secondary uppercase">
             Round {interstitial.round} · Income
           </p>
           <p className="animate-lot-reveal font-display text-6xl text-primary">
@@ -39,7 +39,7 @@ export function PhaseInterstitial({ interstitial, onDone }: PhaseInterstitialPro
         </>
       ) : (
         <>
-          <p className="text-sm tracking-[0.25em] text-secondary/70 uppercase">
+          <p className="text-sm tracking-[0.25em] text-secondary uppercase">
             End of Round {interstitial.round} · Appreciation
           </p>
           <ul className="flex max-w-4xl flex-wrap justify-center gap-4">

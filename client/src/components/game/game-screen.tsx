@@ -140,7 +140,7 @@ export function GameScreen({ myPlayerId }: GameScreenProps) {
           </Drawer>
           <Drawer icon={<DiscardIcon />} title="Discard pile" badge={game.discard.length}>
             {game.discard.length === 0 ? (
-              <p className="text-secondary/70 italic">Nothing has been discarded.</p>
+              <p className="text-secondary italic">Nothing has been discarded.</p>
             ) : (
               <ul className="flex flex-wrap gap-3">
                 {game.discard.map((cardId) => (

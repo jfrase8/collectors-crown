@@ -28,5 +28,5 @@ export const plaqueName = tv({
 })
 
 export const plaqueMeta = tv({
-  base: "text-sm text-secondary/80",
+  base: "text-sm text-secondary",
 })

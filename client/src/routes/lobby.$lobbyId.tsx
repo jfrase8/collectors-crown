@@ -74,7 +74,7 @@ function LobbyPage() {
               <span className="font-medium">
                 {player.name}
                 {player.id === playerId && (
-                  <span className="ml-2 text-sm text-secondary/70">(you)</span>
+                  <span className="ml-2 text-sm text-secondary">(you)</span>
                 )}
               </span>
               {player.id === lobby.hostId && (
@@ -93,14 +93,14 @@ function LobbyPage() {
             Start Game
           </Button>
           {!canStart && (
-            <p className="text-sm text-secondary/70">
+            <p className="text-sm text-secondary">
               Need at least {MIN_PLAYERS_TO_START} players to start.
             </p>
           )}
           {error && <p className="text-sm text-red-400">{error}</p>}
         </div>
       ) : (
-        <p className="text-center text-secondary/70">
+        <p className="text-center text-secondary">
           Waiting for the host to start the game…
         </p>
       )}

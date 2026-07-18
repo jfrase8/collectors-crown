@@ -9,7 +9,7 @@ export const header = tv({
 })
 
 export const eyebrow = tv({
-  base: "text-sm tracking-[0.25em] text-secondary/70 uppercase",
+  base: "text-sm tracking-[0.25em] text-secondary uppercase",
 })
 
 export const tierTitle = tv({
@@ -21,7 +21,7 @@ export const bottomBar = tv({
 })
 
 export const cashLabel = tv({
-  base: "text-xs tracking-widest text-secondary/70 uppercase",
+  base: "text-xs tracking-widest text-secondary uppercase",
 })
 
 export const cashValue = tv({

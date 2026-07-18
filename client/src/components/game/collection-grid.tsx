@@ -8,7 +8,7 @@ interface CollectionGridProps {
 
 export function CollectionGrid({ owner, allPlayers }: CollectionGridProps) {
   if (owner.collection.length === 0) {
-    return <p className="text-secondary/70 italic">No collectibles yet.</p>
+    return <p className="text-secondary italic">No collectibles yet.</p>
   }
   return (
     <ul className="flex flex-wrap gap-3">

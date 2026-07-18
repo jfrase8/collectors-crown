@@ -14,7 +14,7 @@ export const lot = tv({
 })
 
 export const lotLabel = tv({
-  base: "text-sm tracking-widest text-secondary/70 uppercase",
+  base: "text-sm tracking-widest text-secondary uppercase",
 })
 
 export const placard = tv({
@@ -25,7 +25,7 @@ export const highBid = tv({
   base: "font-display text-2xl",
   variants: {
     empty: {
-      true: "text-secondary/70",
+      true: "text-secondary",
       false: "text-primary",
     },
   },
@@ -44,5 +44,5 @@ export const status = tv({
 })
 
 export const queueNote = tv({
-  base: "text-sm text-secondary/60",
+  base: "text-sm text-secondary",
 })

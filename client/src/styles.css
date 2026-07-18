@@ -9,6 +9,8 @@
   --color-on-primary: oklch(0.21 0.02 310);
   --color-background: oklch(0.18 0.006 310);
   --color-surface: oklch(0.22 0.007 310);
+  /* Lighter gray for card frame backgrounds. */
+  --color-frame: oklch(0.20 0.008 310);
   --color-border: oklch(0.33 0.011 310);
   --color-secondary: oklch(0.78 0.013 310);
 
@@ -88,6 +90,8 @@
   }
 
   body {
+    background-color: var(--color-background);
+    color: var(--color-primary);
     user-select: none;
   }
 

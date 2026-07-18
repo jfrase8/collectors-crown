@@ -26,6 +26,143 @@ const TRAITS: readonly TraitId[] = ["appreciation", "collection", "set", "rarity
 
 const TIER_LABEL: Record<Tier, string> = { 1: "Curious", 2: "Prestigious", 3: "Legendary" };
 
+// Unique display names, kept short enough to fit on one line of the card.
+// Indexed [tier][category][trait].
+const CARD_NAMES: Record<Tier, Record<Category, Record<TraitId, string>>> = {
+  1: {
+    Coins: {
+      appreciation: "Buffalo Nickel",
+      collection: "Silver Dollar",
+      set: "Indian Head Cent",
+      rarity: "1943 Copper Cent",
+      pairing: "Trade Dollar",
+    },
+    Stamps: {
+      appreciation: "Penny Red",
+      collection: "Columbian Issue",
+      set: "Zeppelin Post",
+      rarity: "Inverted Swan",
+      pairing: "Pony Express",
+    },
+    Paintings: {
+      appreciation: "Harbor Study",
+      collection: "Still Life",
+      set: "Seasons Panel",
+      rarity: "Lost Miniature",
+      pairing: "Salon Portrait",
+    },
+    Watches: {
+      appreciation: "Conductor's Watch",
+      collection: "Silver Hunter",
+      set: "Trench Watch",
+      rarity: "Skeleton Dial",
+      pairing: "Railroad Watch",
+    },
+    Comics: {
+      appreciation: "First Issue",
+      collection: "Pulp Serial",
+      set: "Sunday Strips",
+      rarity: "Misprint Cover",
+      pairing: "Radio Tie-In",
+    },
+    Relics: {
+      appreciation: "Bronze Amulet",
+      collection: "Clay Tablet",
+      set: "Temple Shards",
+      rarity: "Sealed Urn",
+      pairing: "Pilgrim's Token",
+    },
+  },
+  2: {
+    Coins: {
+      appreciation: "Gold Sovereign",
+      collection: "Double Eagle",
+      set: "Spanish Doubloon",
+      rarity: "1804 Dollar",
+      pairing: "Gold Florin",
+    },
+    Stamps: {
+      appreciation: "Penny Black",
+      collection: "Basel Dove",
+      set: "Missionary Stamp",
+      rarity: "Inverted Jenny",
+      pairing: "Perot Provisional",
+    },
+    Paintings: {
+      appreciation: "Venetian Canal",
+      collection: "Dutch Interior",
+      set: "Baroque Triptych",
+      rarity: "Signed Nocturne",
+      pairing: "Court Portrait",
+    },
+    Watches: {
+      appreciation: "Gold Chronometer",
+      collection: "Minute Repeater",
+      set: "Officer's Watch",
+      rarity: "Enamel Dial",
+      pairing: "Marine Deck Watch",
+    },
+    Comics: {
+      appreciation: "Origin Issue",
+      collection: "Golden Age Run",
+      set: "Crossover Arc",
+      rarity: "Recalled Cover",
+      pairing: "Movie Adaptation",
+    },
+    Relics: {
+      appreciation: "Jade Seal",
+      collection: "Runestone",
+      set: "Mosaic Panels",
+      rarity: "Oracle Bones",
+      pairing: "Crusader's Ring",
+    },
+  },
+  3: {
+    Coins: {
+      appreciation: "Athenian Owl",
+      collection: "Roman Aureus",
+      set: "Brasher Doubloon",
+      rarity: "Flowing Hair",
+      pairing: "Persian Daric",
+    },
+    Stamps: {
+      appreciation: "Blue Mauritius",
+      collection: "Red Mercury",
+      set: "Tre Skilling",
+      rarity: "British Guiana",
+      pairing: "Z Grill",
+    },
+    Paintings: {
+      appreciation: "Gilded Madonna",
+      collection: "Storm at Sea",
+      set: "Muse Cycle",
+      rarity: "Master's Secret",
+      pairing: "Royal Commission",
+    },
+    Watches: {
+      appreciation: "Perpetual Calendar",
+      collection: "Tourbillon",
+      set: "Observatory Trial",
+      rarity: "Grand Complication",
+      pairing: "Sultan's Watch",
+    },
+    Comics: {
+      appreciation: "Hero's Debut",
+      collection: "Complete Run",
+      set: "Trilogy Finale",
+      rarity: "Ashcan Copy",
+      pairing: "Artist's Proof",
+    },
+    Relics: {
+      appreciation: "Pharaoh's Mask",
+      collection: "Terracotta Guard",
+      set: "Crown Jewels",
+      rarity: "Antikythera Gear",
+      pairing: "Grail Fragment",
+    },
+  },
+};
+
 function traitDescription(trait: TraitId, tier: Tier, pairedCategory?: Category): string {
   const cfg = TIER_CONFIG[tier];
   switch (trait) {
@@ -65,7 +202,7 @@ function buildCatalog(): CollectibleDefinition[] {
             : undefined;
         cards.push({
           id,
-          name: `${TIER_LABEL[tier]} ${category.replace(/s$/, "")} of ${trait[0].toUpperCase()}${trait.slice(1)}`,
+          name: CARD_NAMES[tier][category][trait],
           tier,
           category,
           trait,

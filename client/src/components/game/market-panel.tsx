@@ -30,7 +30,7 @@ export function MarketPanel({ game, myPlayerId, send }: MarketPanelProps) {
       </div>
 
       {me.collection.length === 0 ? (
-        <p className="text-secondary/70 italic">You own nothing to sell.</p>
+        <p className="text-secondary italic">You own nothing to sell.</p>
       ) : (
         <ul className="flex max-w-4xl flex-wrap justify-center gap-4">
           {me.collection.map((owned) => {

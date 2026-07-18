@@ -12,7 +12,7 @@ import {
   type SocketData,
 } from "@collectors-crown/shared";
 import type { Server, Socket } from "socket.io";
-import { saveGame } from "../game/store.js";
+import { deleteGame, saveGame } from "../game/store.js";
 import { deleteLobby, getLobby, listLobbies, reserveLobbyName, saveLobby } from "../lobby/store.js";
 
 type GameServer = Server<
@@ -189,22 +189,12 @@ async function leaveCurrentLobby(io: GameServer, socket: GameSocket) {
     const lobby = await getLobby(lobbyId);
     if (!lobby) return;
 
-    if (lobby.phase === "in_progress") {
-      // Never remove players from a running game — mark them disconnected so
-      // they can rejoin later (reconnect flow not implemented yet).
-      const player = lobby.players.find((p) => p.id === playerId);
-      if (player) {
-        player.connected = false;
-        await saveLobby(lobby);
-        io.to(lobbyRoom(lobby.id)).emit("lobby:state", lobby);
-      }
-      return;
-    }
-
+    // Disconnect = kicked, regardless of phase (reconnect flow not implemented yet).
     lobby.players = lobby.players.filter((p) => p.id !== playerId);
 
     if (lobby.players.length === 0) {
       await deleteLobby(lobby);
+      if (lobby.phase === "in_progress") await deleteGame(lobby.id);
     } else {
       if (lobby.hostId === playerId) {
         // Longest-present remaining player becomes the new host.

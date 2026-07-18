@@ -29,7 +29,7 @@ export function ScoresPanel({ game, myPlayerId }: ScoresPanelProps) {
               </span>
               <span className="text-right">
                 <span className="font-display text-xl">{formatMoney(score.netWorth)}</span>
-                <span className="block text-xs text-secondary/70">
+                <span className="block text-xs text-secondary">
                   {formatMoney(score.cash)} cash + {formatMoney(score.collectionValue)} collection
                 </span>
               </span>

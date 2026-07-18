@@ -78,7 +78,7 @@ export function GrandAuctionStage({ game, auction, myPlayerId, send }: GrandAuct
   return (
     <section className="flex flex-1 flex-col items-center gap-5 py-4">
       <div className="text-center">
-        <p className="text-sm tracking-widest text-secondary/70 uppercase">
+        <p className="text-sm tracking-widest text-secondary uppercase">
           Every lot is on the table · five bids each
         </p>
         <p className="text-secondary">
@@ -109,7 +109,7 @@ export function GrandAuctionStage({ game, auction, myPlayerId, send }: GrandAuct
                   <CollectibleCard cardId={cardId} size="lg" />
                 </Tooltip>
               </TooltipTrigger>
-              <span className={`text-xs ${mine ? "text-primary" : "text-secondary/80"}`}>
+              <span className={`text-xs ${mine ? "text-primary" : "text-secondary"}`}>
                 {top && holder
                   ? `${formatMoney(top.amount)} — ${mine ? "you" : holder.name}`
                   : `Starting Price ${formatMoney(getCard(cardId).printedValue)}`}

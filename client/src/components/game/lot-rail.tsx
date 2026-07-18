@@ -26,7 +26,7 @@ export function LotRail({ results, players }: LotRailProps) {
         return (
           <li key={result.cardId} className="flex shrink-0 flex-col items-center gap-1">
             <CardWithDetails cardId={result.cardId} />
-            <span className="text-xs text-secondary/80">
+            <span className="text-xs text-secondary">
               {winner && result.price !== null
                 ? `${winner.name} — ${formatMoney(result.price)}`
                 : "Passed over"}
