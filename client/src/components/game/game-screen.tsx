@@ -104,9 +104,12 @@ export function GameScreen({ myPlayerId }: GameScreenProps) {
   }
 
   const tier = tierForRound(game.round)
+  const activeSeat = game.phase === "auction" && game.auction ? game.auction.turnSeat : null
+  const isMyTurn = activeSeat !== null && game.players[activeSeat]?.id === myPlayerId
 
   return (
     <main className={screen()}>
+      <div className="turn-glow" data-my-turn={isMyTurn} aria-hidden="true" />
       <header className={header()}>
         <p className={eyebrow()}>
           Round {game.round} of {TOTAL_ROUNDS}

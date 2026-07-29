@@ -30,7 +30,7 @@ function RootLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-primary">
+    <div className="min-h-screen text-primary">
       <Outlet />
     </div>
   );

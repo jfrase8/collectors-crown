@@ -6,7 +6,8 @@
       "PowerShell(Get-Service Memurai)",
       "PowerShell(npm run dev:server)",
       "PowerShell(npm run dev)",
-      "PowerShell(\\(Invoke-WebRequest -Uri http://localhost:5173 -UseBasicParsing\\).StatusCode)"
+      "PowerShell(\\(Invoke-WebRequest -Uri http://localhost:5173 -UseBasicParsing\\).StatusCode)",
+      "Bash(npm run *)"
     ]
   }
 }

@@ -1,16 +1,7 @@
 import { tv } from "tailwind-variants"
 
 export const stage = tv({
-  base: "relative flex flex-1 flex-col items-center justify-center gap-6 py-6",
-})
-
-/** Warm lamplight halo behind the lot on the block. */
-export const lamplight = tv({
-  base: "pointer-events-none absolute top-1/2 left-1/2 -z-10 size-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,--alpha(var(--color-primary)/18%),transparent_70%)]",
-})
-
-export const lot = tv({
-  base: "animate-lot-reveal",
+  base: "relative flex min-h-0 flex-1 flex-col items-center justify-center gap-3 py-2",
 })
 
 export const lotLabel = tv({
@@ -18,7 +9,14 @@ export const lotLabel = tv({
 })
 
 export const placard = tv({
-  base: "flex min-w-72 flex-col items-center gap-1 rounded-lg border border-border bg-surface/80 px-6 py-3 text-center",
+  base: "flex min-w-72 flex-col items-center justify-center gap-1 rounded-lg border border-border bg-surface/80 px-6 py-3 text-center transition-[min-height] duration-500 ease-out",
+  variants: {
+    myTurn: {
+      true: "min-h-36",
+      false: "min-h-20",
+    },
+  },
+  defaultVariants: { myTurn: false },
 })
 
 export const highBid = tv({
@@ -41,8 +39,4 @@ export const controls = tv({
 
 export const status = tv({
   base: "text-secondary italic",
-})
-
-export const queueNote = tv({
-  base: "text-sm text-secondary",
 })

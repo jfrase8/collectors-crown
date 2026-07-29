@@ -1,11 +1,11 @@
 import { tv } from "tailwind-variants"
 
 export const screen = tv({
-  base: "mx-auto flex min-h-screen max-w-6xl flex-col gap-4 px-4 py-6",
+  base: "mx-auto flex h-screen max-w-6xl flex-col gap-3 overflow-hidden px-4 py-4",
 })
 
 export const header = tv({
-  base: "flex flex-col items-center gap-3",
+  base: "flex shrink-0 flex-col items-center gap-2",
 })
 
 export const eyebrow = tv({
@@ -17,7 +17,7 @@ export const tierTitle = tv({
 })
 
 export const bottomBar = tv({
-  base: "flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface/80 px-5 py-3",
+  base: "flex shrink-0 flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface/80 px-5 py-3",
 })
 
 export const cashLabel = tv({

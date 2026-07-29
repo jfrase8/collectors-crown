@@ -1,4 +1,5 @@
 import { getCard, type Category, type CollectibleId, type Tier } from "@collectors-crown/shared"
+import { cardArt } from "../../lib/card-art"
 import { formatMoney } from "../../lib/format"
 import { card, compactCard } from "./collectible-card.styles"
 import { CATEGORY_ICONS, CrownIcon, TRAIT_ICONS } from "./icons"
@@ -34,9 +35,16 @@ interface CollectibleCardProps {
   size?: "lg" | "sm"
   /** Current calculated value; falls back to the printed value when omitted. */
   currentValue?: number
+  /** Owner's color; tints the inner frame so a glance shows who bought it. */
+  accent?: string
 }
 
-export function CollectibleCard({ cardId, size = "lg", currentValue }: CollectibleCardProps) {
+export function CollectibleCard({
+  cardId,
+  size = "lg",
+  currentValue,
+  accent,
+}: CollectibleCardProps) {
   const def = getCard(cardId)
   const value = currentValue ?? def.printedValue
   const tint = CATEGORY_HUE[def.category]
@@ -71,16 +79,28 @@ export function CollectibleCard({ cardId, size = "lg", currentValue }: Collectib
   }
 
   const styles = card()
+  const art = cardArt(def.name)
   return (
-    <article className={styles.root()}>
+    <article
+      className={styles.root()}
+      style={
+        accent
+          ? { backgroundColor: `color-mix(in oklch, ${accent} 40%, var(--color-surface))` }
+          : undefined
+      }
+    >
       <div className={styles.frame()} aria-hidden />
       <div className={styles.tierBanner()} style={{ color: tierColor, borderColor: tierColor }}>
         Tier {TIER_NUMERAL[def.tier]}
       </div>
       <h3 className={styles.name()}>{def.name}</h3>
-      <div className={styles.seal()} style={{ borderColor: tint, color: tint }} aria-hidden>
-        <span className={styles.sealInitial()}>{def.category[0]}</span>
-      </div>
+      {art ? (
+        <img src={art} alt="" className={styles.art()} draggable={false} />
+      ) : (
+        <div className={styles.seal()} style={{ borderColor: tint, color: tint }} aria-hidden>
+          <span className={styles.sealInitial()}>{def.category[0]}</span>
+        </div>
+      )}
       <div className={styles.categoryRow()}>
         <span style={{ color: tint }} aria-hidden>
           <CategoryIcon width={18} height={18} />
@@ -92,12 +112,10 @@ export function CollectibleCard({ cardId, size = "lg", currentValue }: Collectib
           <TraitIcon />
         </span>
         <div>
-          <p className={styles.traitLabel()}>Trait:</p>
           <p className={styles.traitName()}>{TRAIT_LABEL[def.trait]}</p>
           <p className={styles.traitDesc()}>{def.traitDescription}</p>
         </div>
       </div>
-      <p className={styles.history()}>{def.historicalDescription}</p>
       <footer className={styles.banner()}>
         <CrownIcon width={16} height={16} className="text-primary" />
         {value === def.printedValue ? (

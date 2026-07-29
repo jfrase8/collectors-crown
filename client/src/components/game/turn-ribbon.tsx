@@ -1,5 +1,6 @@
 import type { GameSnapshot, PlayerId } from "@collectors-crown/shared"
 import { formatMoney } from "../../lib/format"
+import { playerColor } from "../../lib/player-colors"
 import { plaque, plaqueMeta, plaqueName, ribbon } from "./turn-ribbon.styles"
 
 interface TurnRibbonProps {
@@ -20,12 +21,20 @@ export function TurnRibbon({ game, myPlayerId }: TurnRibbonProps) {
         const isActive = seat === activeSeat
         const hasPassed = passed.includes(player.id)
         const isDoneSelling = game.phase === "market" && game.marketDone.includes(player.id)
+        const isMyTurn = isActive && player.id === myPlayerId
         return (
           <li
             key={player.id}
-            className={plaque({ active: isActive, dimmed: hasPassed || isDoneSelling })}
+            // Rebind the accent color inside this plaque to the player's own
+            // color; border/text/glow classes all resolve against it.
+            style={{ ["--color-primary" as string]: playerColor(seat) } as React.CSSProperties}
+            className={plaque({
+              active: isActive,
+              dimmed: hasPassed || isDoneSelling,
+              yourTurn: isMyTurn,
+            })}
           >
-            <span className={plaqueName({ active: isActive })}>
+            <span className={plaqueName()}>
               {player.name}
               {player.id === myPlayerId && " (you)"}
             </span>
