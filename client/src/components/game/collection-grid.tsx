@@ -11,7 +11,7 @@ export function CollectionGrid({ owner, allPlayers }: CollectionGridProps) {
     return <p className="text-secondary italic">No collectibles yet.</p>
   }
   return (
-    <ul className="flex flex-wrap gap-3">
+    <ul className="flex flex-col gap-2">
       {owner.collection.map((owned) => (
         <li key={owned.id}>
           <CardWithDetails

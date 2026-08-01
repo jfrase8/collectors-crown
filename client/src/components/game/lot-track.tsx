@@ -23,6 +23,14 @@ const FILL_RATIO = 0.9
  * A card is fully transparent by the time its left edge would be clipped.
  */
 const FADE_RATIO = 0.35
+/**
+ * Extra left margin on the lot on the block (on top of the shared gap), setting
+ * the auctioned lots further back so they read as history rather than as peers
+ * of the card being bid on. It doesn't disturb centering: the strip rests at
+ * max scroll, where the current lot's screen position is fixed by the right
+ * padding that trails it, so this margin is absorbed by the scroll range.
+ */
+const CURRENT_GAP = 40
 
 /**
  * One horizontal carousel of cards. The lot on the block sits at the right,
@@ -211,7 +219,9 @@ export function LotTrack({ results, current, players }: LotTrackProps) {
         onPointerMove={handlePointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        className="flex h-full w-full cursor-grab touch-pan-y items-center gap-4 overflow-x-auto select-none scrollbar-none [&::-webkit-scrollbar]:hidden"
+        className={`flex h-full w-full touch-pan-y items-center gap-4 overflow-x-auto select-none scrollbar-none [&::-webkit-scrollbar]:hidden ${
+          canScrollBack || canScrollForward ? "cursor-grab" : ""
+        }`}
         style={{ paddingRight: pad }}
       >
         {slots.map((slot, index) => {
@@ -231,6 +241,7 @@ export function LotTrack({ results, current, players }: LotTrackProps) {
                 {
                   width: cardW,
                   height: cardH,
+                  marginLeft: isCurrent && results.length > 0 ? CURRENT_GAP : undefined,
                   // Fully opaque until updateFades positions the real stops.
                   ["--fade-from" as string]: "-2px",
                   ["--fade-to" as string]: "-1px",
@@ -239,7 +250,7 @@ export function LotTrack({ results, current, players }: LotTrackProps) {
               className={`group relative shrink-0 scroll-ml-6 transition-transform duration-500 ease-out mask-[linear-gradient(to_right,transparent_var(--fade-from),#000_var(--fade-to))] ${
                 isCurrent
                   ? "z-10 scale-100"
-                  : "scale-90 hover:z-20 hover:scale-100 hover:mask-none"
+                  : "scale-75 hover:z-20 hover:scale-100 hover:mask-none"
               } ${index === 0 ? "ml-auto" : ""}`}
             >
               {/* The card renders at intrinsic size and is centered + scaled

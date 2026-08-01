@@ -62,6 +62,16 @@ export function CloseIcon(props: IconProps) {
   )
 }
 
+/** Question mark — opens the trait reference panel. */
+export function HelpIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M9 9.2a3 3 0 1 1 4.6 2.5c-1 .7-1.6 1.4-1.6 2.6" />
+      <path d="M12 17.5v.01" />
+    </Icon>
+  )
+}
+
 /** The collector's crown — used on card price banners. */
 export function CrownIcon(props: IconProps) {
   return (

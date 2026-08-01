@@ -31,6 +31,7 @@ import { MarketPanel } from "./market-panel"
 import { PhaseInterstitial, type Interstitial } from "./phase-interstitial"
 import { PlayersPanel } from "./players-panel"
 import { ScoresPanel } from "./scores-panel"
+import { TraitHelp } from "./trait-help"
 import { TurnRibbon } from "./turn-ribbon"
 
 interface GameScreenProps {
@@ -110,6 +111,7 @@ export function GameScreen({ myPlayerId }: GameScreenProps) {
   return (
     <main className={screen()}>
       <div className="turn-glow" data-my-turn={isMyTurn} aria-hidden="true" />
+      <TraitHelp />
       <header className={header()}>
         <p className={eyebrow()}>
           Round {game.round} of {TOTAL_ROUNDS}
@@ -145,7 +147,7 @@ export function GameScreen({ myPlayerId }: GameScreenProps) {
             {game.discard.length === 0 ? (
               <p className="text-secondary italic">Nothing has been discarded.</p>
             ) : (
-              <ul className="flex flex-wrap gap-3">
+              <ul className="flex flex-col gap-2">
                 {game.discard.map((cardId) => (
                   <li key={cardId}>
                     <CardWithDetails cardId={cardId} />

@@ -14,10 +14,14 @@
   --color-border: oklch(0.33 0.011 310);
   --color-secondary: oklch(0.78 0.013 310);
 
-  /* Tier metals: I copper, II pewter, III gold. */
-  --color-tier1: oklch(0.65 0.1 43);
-  --color-tier2: oklch(0.75 0.02 270);
-  --color-tier3: oklch(0.82 0.13 88);
+  /* Tier materials: I brown, II silver, III diamond. Lightness climbs with the
+     tier so rank reads at a glance on the dark frame; chroma drops toward the
+     top so diamond stays near-white with only a cool blue cast. Tier 1 sits
+     darker and much less saturated than --color-primary (which is a warm
+     copper at a neighboring hue) so the two never read as the same accent. */
+  --color-tier1: oklch(0.45 0.035 70);
+  --color-tier2: oklch(0.79 0.012 250);
+  --color-tier3: oklch(0.93 0.035 210);
 
   --animate-lot-reveal: lot-reveal 0.45s ease both;
   --animate-drawer-in: drawer-in 0.2s ease both;
@@ -25,6 +29,31 @@
   --animate-fade-in: fade-in 0.2s ease both;
   --animate-fade-out: fade-out 0.15s ease both;
   --animate-turn-pulse: turn-pulse 1.6s ease-in-out infinite;
+  --animate-help-in: help-in 0.2s ease both;
+  --animate-help-out: help-out 0.15s ease both;
+}
+
+/* Trait reference panel grows out of its top-right trigger button. */
+@keyframes help-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes help-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.6);
+  }
 }
 
 @keyframes lot-reveal {

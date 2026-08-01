@@ -1,4 +1,9 @@
-import { getCard, type Category, type CollectibleId, type Tier } from "@collectors-crown/shared"
+import {
+  getCard,
+  type Category,
+  type CollectibleId,
+  type Tier,
+} from "@collectors-crown/shared"
 import { cardArt } from "../../lib/card-art"
 import { formatMoney } from "../../lib/format"
 import { card, compactCard } from "./collectible-card.styles"
@@ -22,7 +27,7 @@ const CATEGORY_HUE: Record<Category, string> = {
   Relics: "oklch(0.7 0.08 55)",
 }
 
-const TRAIT_LABEL: Record<string, string> = {
+export const TRAIT_LABEL: Record<string, string> = {
   appreciation: "Appreciation",
   collection: "Collection",
   set: "Set",
@@ -57,23 +62,23 @@ export function CollectibleCard({
     return (
       <article className={styles.root()}>
         <div className={styles.trim()} style={{ backgroundColor: tierColor }} />
-        <div className={styles.header()}>
-          <span className={styles.tier()} style={{ color: tierColor }}>
-            {TIER_NUMERAL[def.tier]}
-          </span>
-          <span style={{ color: tint }} title={def.category}>
-            <CategoryIcon width={16} height={16} />
-          </span>
-        </div>
+        <span className={styles.tier()} style={{ color: tierColor }}>
+          {TIER_NUMERAL[def.tier]}
+        </span>
+        <span
+          className="shrink-0"
+          style={{ color: tint }}
+          title={def.category}
+        >
+          <CategoryIcon width={16} height={16} />
+        </span>
         <h3 className={styles.name()}>{def.name}</h3>
-        <footer className={styles.footer()}>
-          <span className={styles.traitIcon()} title={TRAIT_LABEL[def.trait]}>
-            <TraitIcon width={16} height={16} />
-          </span>
-          <span className={styles.value()} title="Current value">
-            {formatMoney(value)}
-          </span>
-        </footer>
+        <span className={styles.traitIcon()} title={TRAIT_LABEL[def.trait]}>
+          <TraitIcon width={16} height={16} />
+        </span>
+        <span className={styles.value()} title="Current value">
+          {formatMoney(value)}
+        </span>
       </article>
     )
   }
@@ -83,38 +88,46 @@ export function CollectibleCard({
   return (
     <article
       className={styles.root()}
-      style={
-        accent
-          ? { backgroundColor: `color-mix(in oklch, ${accent} 40%, var(--color-surface))` }
-          : undefined
-      }
+      style={accent ? { backgroundColor: accent } : undefined}
     >
       <div className={styles.frame()} aria-hidden />
-      <div className={styles.tierBanner()} style={{ color: tierColor, borderColor: tierColor }}>
+      <div
+        className={styles.tierBanner()}
+        style={{ backgroundColor: tierColor }}
+      >
         Tier {TIER_NUMERAL[def.tier]}
       </div>
       <h3 className={styles.name()}>{def.name}</h3>
-      {art ? (
-        <img src={art} alt="" className={styles.art()} draggable={false} />
-      ) : (
-        <div className={styles.seal()} style={{ borderColor: tint, color: tint }} aria-hidden>
-          <span className={styles.sealInitial()}>{def.category[0]}</span>
-        </div>
-      )}
+      <div className={styles.artBox()}>
+        {art ? (
+          <img src={art} alt="" className={styles.art()} draggable={false} />
+        ) : (
+          <div
+            className={styles.seal()}
+            style={{ borderColor: tint, color: tint }}
+            aria-hidden
+          >
+            <span className={styles.sealInitial()}>{def.category[0]}</span>
+          </div>
+        )}
+      </div>
       <div className={styles.categoryRow()}>
         <span style={{ color: tint }} aria-hidden>
           <CategoryIcon width={18} height={18} />
         </span>
         <span className={styles.categoryLabel()}>Category: {def.category}</span>
       </div>
-      <div className={styles.traitBox()}>
-        <span className={styles.traitBadge()} aria-hidden>
-          <TraitIcon />
+      {/* CSS-only tooltip: a react-aria TooltipTrigger here would clobber the
+          enclosing trigger's ref when this card renders inside another tooltip
+          (e.g. the compact-card hover preview), breaking its positioning. */}
+      <div className={styles.traitRow()}>
+        <span className="text-primary" aria-hidden>
+          <TraitIcon width={18} height={18} />
         </span>
-        <div>
-          <p className={styles.traitName()}>{TRAIT_LABEL[def.trait]}</p>
-          <p className={styles.traitDesc()}>{def.traitDescription}</p>
-        </div>
+        <span className={styles.traitLabel()}>{TRAIT_LABEL[def.trait]}</span>
+        <span className={styles.traitTooltip()} role="tooltip">
+          {def.traitDescription}
+        </span>
       </div>
       <footer className={styles.banner()}>
         <CrownIcon width={16} height={16} className="text-primary" />

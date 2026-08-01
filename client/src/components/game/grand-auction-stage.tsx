@@ -99,7 +99,7 @@ export function GrandAuctionStage({ game, auction, myPlayerId, send }: GrandAuct
               <TooltipTrigger delay={250} closeDelay={100}>
                 <AriaButton
                   onPress={() => setSelected(isSelected ? null : cardId)}
-                  className={`rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  className={`w-72 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                     isSelected ? "ring-2 ring-primary" : ""
                   }`}
                 >
@@ -199,7 +199,7 @@ function ChooseWinnings({ wonCards, isMe, chooserName, send }: ChooseWinningsPro
           <li key={cardId}>
             <AriaButton
               onPress={() => toggle(cardId)}
-              className={`rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+              className={`w-72 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                 picked.includes(cardId) ? "ring-2 ring-primary" : "opacity-80"
               }`}
             >

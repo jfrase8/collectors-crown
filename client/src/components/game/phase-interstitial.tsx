@@ -44,7 +44,7 @@ export function PhaseInterstitial({ interstitial, onDone }: PhaseInterstitialPro
           </p>
           <ul className="flex max-w-4xl flex-wrap justify-center gap-4">
             {interstitial.gains.map(({ cardId, gained }) => (
-              <li key={cardId} className="flex animate-lot-reveal flex-col items-center gap-1">
+              <li key={cardId} className="flex w-72 animate-lot-reveal flex-col items-center gap-1">
                 <CollectibleCard cardId={cardId} size="sm" />
                 <span className="font-display text-lg text-primary">+{formatMoney(gained)}</span>
               </li>
