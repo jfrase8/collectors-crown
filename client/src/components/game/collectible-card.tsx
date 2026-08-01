@@ -79,7 +79,7 @@ export function CollectibleCard({
   }
 
   const styles = card()
-  const art = cardArt(def.name)
+  const art = cardArt(def.name, def.category)
   return (
     <article
       className={styles.root()}

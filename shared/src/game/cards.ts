@@ -1,11 +1,11 @@
-import { TIER_CONFIG } from "./constants.js";
+import { TIER_CONFIG } from "./constants.js"
 import type {
   Category,
   CollectibleDefinition,
   CollectibleId,
   Tier,
   TraitId,
-} from "./types.js";
+} from "./types.js"
 
 // Placeholder card catalog: 30 cards per tier, 6 categories × 5 cards.
 // Per tier each category gets one card of each trait (appreciation,
@@ -20,11 +20,21 @@ export const CATEGORIES: readonly Category[] = [
   "Watches",
   "Comics",
   "Relics",
-];
+]
 
-const TRAITS: readonly TraitId[] = ["appreciation", "collection", "set", "rarity", "pairing"];
+const TRAITS: readonly TraitId[] = [
+  "appreciation",
+  "collection",
+  "set",
+  "rarity",
+  "pairing",
+]
 
-const TIER_LABEL: Record<Tier, string> = { 1: "Curious", 2: "Prestigious", 3: "Legendary" };
+const TIER_LABEL: Record<Tier, string> = {
+  1: "Curious",
+  2: "Prestigious",
+  3: "Legendary",
+}
 
 // Unique display names, kept short enough to fit on one line of the card.
 // Indexed [tier][category][trait].
@@ -59,11 +69,11 @@ const CARD_NAMES: Record<Tier, Record<Category, Record<TraitId, string>>> = {
       pairing: "Railroad Watch",
     },
     Comics: {
-      appreciation: "First Issue",
-      collection: "Pulp Serial",
-      set: "Sunday Strips",
-      rarity: "Misprint Cover",
-      pairing: "Radio Tie-In",
+      appreciation: "Shadow Lynx",
+      collection: "Crimson Bolt",
+      set: "Frost Fang",
+      rarity: "Emberstrike",
+      pairing: "Emerald Viper",
     },
     Relics: {
       appreciation: "Bronze Amulet",
@@ -103,11 +113,11 @@ const CARD_NAMES: Record<Tier, Record<Category, Record<TraitId, string>>> = {
       pairing: "Marine Deck Watch",
     },
     Comics: {
-      appreciation: "Origin Issue",
-      collection: "Golden Age Run",
-      set: "Crossover Arc",
-      rarity: "Recalled Cover",
-      pairing: "Movie Adaptation",
+      appreciation: "Nova Knight",
+      collection: "Iron Warden",
+      set: "Phantom Vanguard",
+      rarity: "Tempest Titan",
+      pairing: "Captain Valor",
     },
     Relics: {
       appreciation: "Jade Seal",
@@ -147,11 +157,11 @@ const CARD_NAMES: Record<Tier, Record<Category, Record<TraitId, string>>> = {
       pairing: "Sultan's Watch",
     },
     Comics: {
-      appreciation: "Hero's Debut",
-      collection: "Complete Run",
-      set: "Trilogy Finale",
-      rarity: "Ashcan Copy",
-      pairing: "Artist's Proof",
+      appreciation: "Titan Prime",
+      collection: "Solar Sentinel",
+      set: "Star Sovereign",
+      rarity: "Eclipse Guardian",
+      pairing: "Infinity Paragon",
     },
     Relics: {
       appreciation: "Pharaoh's Mask",
@@ -161,45 +171,49 @@ const CARD_NAMES: Record<Tier, Record<Category, Record<TraitId, string>>> = {
       pairing: "Grail Fragment",
     },
   },
-};
+}
 
-function traitDescription(trait: TraitId, tier: Tier, pairedCategory?: Category): string {
-  const cfg = TIER_CONFIG[tier];
+function traitDescription(
+  trait: TraitId,
+  tier: Tier,
+  pairedCategory?: Category,
+): string {
+  const cfg = TIER_CONFIG[tier]
   switch (trait) {
     case "appreciation":
-      return `Gains $${cfg.appreciationPerRound} in value at the end of every round.`;
+      return `Gains $${cfg.appreciationPerRound} in value at the end of every round.`
     case "collection":
-      return `Gains $${cfg.collectionBonusPerMatch} for each collectible you own in its category (including itself).`;
+      return `Gains $${cfg.collectionBonusPerMatch} for each collectible you own in its category (including itself).`
     case "set":
-      return "Part of a 3-card set. Value is multiplied by the number of set cards you own.";
+      return "Part of a 3-card set. Value is multiplied by the number of set cards you own."
     case "rarity":
-      return `At final scoring, gains $${cfg.rarityBonusPerOpponent} for every opponent who owns zero Rare collectibles.`;
+      return `At final scoring, gains $${cfg.rarityBonusPerOpponent} for every opponent who owns zero Rare collectibles.`
     case "pairing":
-      return `Gains $${cfg.pairingBonus} if you own at least one ${pairedCategory} collectible.`;
+      return `Gains $${cfg.pairingBonus} if you own at least one ${pairedCategory} collectible.`
   }
 }
 
 function buildCatalog(): CollectibleDefinition[] {
-  const cards: CollectibleDefinition[] = [];
+  const cards: CollectibleDefinition[] = []
   for (const tier of [1, 2, 3] as const) {
-    const { min, max } = TIER_CONFIG[tier].printedValues;
-    const steps = (max - min) / 100 + 1;
-    let indexInTier = 0;
+    const { min, max } = TIER_CONFIG[tier].printedValues
+    const steps = (max - min) / 100 + 1
+    let indexInTier = 0
     for (const category of CATEGORIES) {
       for (const trait of TRAITS) {
-        const id: CollectibleId = `t${tier}-${category.toLowerCase()}-${trait}`;
+        const id: CollectibleId = `t${tier}-${category.toLowerCase()}-${trait}`
         // Spread printed values evenly across the tier's allowed range.
-        const printedValue = min + (indexInTier % steps) * 100;
+        const printedValue = min + (indexInTier % steps) * 100
         // Pair each category with the next one in the list.
         const pairedCategory =
           trait === "pairing"
             ? CATEGORIES[(CATEGORIES.indexOf(category) + 1) % CATEGORIES.length]
-            : undefined;
+            : undefined
         // Two 3-card sets per tier: categories 0-2 form set A, 3-5 set B.
         const setId =
           trait === "set"
             ? `t${tier}-set-${CATEGORIES.indexOf(category) < 3 ? "a" : "b"}`
-            : undefined;
+            : undefined
         cards.push({
           id,
           name: CARD_NAMES[tier][category][trait],
@@ -211,24 +225,24 @@ function buildCatalog(): CollectibleDefinition[] {
           traitDescription: traitDescription(trait, tier, pairedCategory),
           ...(setId ? { setId } : {}),
           ...(pairedCategory ? { pairedCategory } : {}),
-        });
-        indexInTier++;
+        })
+        indexInTier++
       }
     }
   }
-  return cards;
+  return cards
 }
 
-export const CARD_CATALOG: readonly CollectibleDefinition[] = buildCatalog();
+export const CARD_CATALOG: readonly CollectibleDefinition[] = buildCatalog()
 
-const catalogById = new Map(CARD_CATALOG.map((c) => [c.id, c]));
+const catalogById = new Map(CARD_CATALOG.map((c) => [c.id, c]))
 
 export function getCard(id: CollectibleId): CollectibleDefinition {
-  const card = catalogById.get(id);
-  if (!card) throw new Error(`Unknown collectible id: ${id}`);
-  return card;
+  const card = catalogById.get(id)
+  if (!card) throw new Error(`Unknown collectible id: ${id}`)
+  return card
 }
 
 export function cardsForTier(tier: Tier): CollectibleDefinition[] {
-  return CARD_CATALOG.filter((c) => c.tier === tier);
+  return CARD_CATALOG.filter((c) => c.tier === tier)
 }
