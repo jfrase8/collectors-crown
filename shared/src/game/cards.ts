@@ -187,7 +187,7 @@ function traitDescription(
     case "set":
       return "Part of a 3-card set. Value is multiplied by the number of set cards you own."
     case "rarity":
-      return `At final scoring, gains $${cfg.rarityBonusPerOpponent} for every opponent who owns zero Rare collectibles.`
+      return `Gains $${cfg.rarityBonusPerOpponent} for every opponent who owns zero Rare collectibles.`
     case "pairing":
       return `Gains $${cfg.pairingBonus} if you own at least one ${pairedCategory} collectible.`
   }

@@ -68,6 +68,7 @@ export function createGame(gameId: string, players: NewGamePlayer[], seed: numbe
     },
     discard: [],
     marketDone: [],
+    pendingSales: {},
     finalScores: null,
     version: 0,
   };
@@ -115,7 +116,7 @@ export function applyAction(
 }
 
 export function toSnapshot(state: GameState): GameSnapshot {
-  const { decks, seed: _seed, ...rest } = structuredClone(state);
+  const { decks, seed: _seed, pendingSales: _pendingSales, ...rest } = structuredClone(state);
   return {
     ...rest,
     deckCounts: { 1: decks[1].length, 2: decks[2].length, 3: decks[3].length },
@@ -184,6 +185,7 @@ function endAuctionPhase(state: GameState) {
   for (const p of state.players) p.cash += income;
   state.phase = "market";
   state.marketDone = [];
+  state.pendingSales = {};
 }
 
 function endRound(state: GameState) {
@@ -526,20 +528,49 @@ function handleChooseWinnings(
 // Market phase
 // ---------------------------------------------------------------------------
 
+/**
+ * Queues a card for sale. Nothing changes hands until every player is done,
+ * so sales stay hidden and values stay frozen while others are deciding.
+ */
 function handleSell(state: GameState, playerId: PlayerId, cardId: CollectibleId): string | null {
   if (state.phase !== "market") return "You can only sell during the Market Phase.";
   if (state.marketDone.includes(playerId)) return "You have already finished selling.";
 
   const player = state.players.find((p) => p.id === playerId)!;
-  const index = player.collection.findIndex((c) => c.id === cardId);
-  if (index === -1) return "You do not own that collectible.";
+  if (!player.collection.some((c) => c.id === cardId)) return "You do not own that collectible.";
 
-  const owned = player.collection[index];
-  const price = currentValue(owned, player, state.players);
-  player.collection.splice(index, 1);
-  player.cash += price;
-  state.discard.push(owned.id);
+  const pending = (state.pendingSales[playerId] ??= []);
+  if (pending.includes(cardId)) return "That collectible is already queued to sell.";
+  pending.push(cardId);
   return null;
+}
+
+/**
+ * Applies every queued sale simultaneously: all prices are computed against
+ * the market-open state first, so no sale — the seller's own or another
+ * player's — can change what a card fetches.
+ */
+function resolveMarketSales(state: GameState) {
+  const sales: { player: GamePlayer; index: number; price: number }[] = [];
+  for (const player of state.players) {
+    for (const cardId of state.pendingSales[player.id] ?? []) {
+      const index = player.collection.findIndex((c) => c.id === cardId);
+      if (index === -1) continue;
+      sales.push({
+        player,
+        index,
+        price: currentValue(player.collection[index], player, state.players),
+      });
+    }
+  }
+  // Remove highest indices first so earlier removals don't shift later ones.
+  sales.sort((a, b) => b.index - a.index);
+  for (const { player, index, price } of sales) {
+    const [sold] = player.collection.splice(index, 1);
+    player.cash += price;
+    state.discard.push(sold.id);
+  }
+  state.pendingSales = {};
 }
 
 function handleMarketDone(state: GameState, playerId: PlayerId): string | null {
@@ -548,6 +579,7 @@ function handleMarketDone(state: GameState, playerId: PlayerId): string | null {
 
   state.marketDone.push(playerId);
   if (state.marketDone.length === state.players.length) {
+    resolveMarketSales(state);
     endRound(state);
   }
   return null;

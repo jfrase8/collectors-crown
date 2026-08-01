@@ -21,7 +21,7 @@ export interface TierConfig {
   appreciationPerRound: number;
   /** Per owned collectible in the same category, including itself (Collection trait). */
   collectionBonusPerMatch: number;
-  /** Per opponent owning zero Rare collectibles, final scoring only (Rarity trait). */
+  /** Per opponent owning zero Rare collectibles, applied live (Rarity trait). */
   rarityBonusPerOpponent: number;
   /** If the owner holds at least one collectible of the paired category (Pairing trait). */
   pairingBonus: number;

@@ -139,14 +139,20 @@ export interface GameState {
   discard: CollectibleId[];
   /** Players done selling in the current market phase. */
   marketDone: PlayerId[];
+  /**
+   * Sales queued during the market phase, applied all at once when every
+   * player is done — so nobody's values shift while others are still
+   * deciding. Hidden from clients until resolved.
+   */
+  pendingSales: Record<PlayerId, CollectibleId[]>;
   /** Present only when phase === "finished". */
   finalScores: FinalScore[] | null;
   /** Monotonic action counter, for client ordering/optimistic checks. */
   version: number;
 }
 
-/** What clients see. Decks are hidden (only counts are public). */
-export interface GameSnapshot extends Omit<GameState, "decks" | "seed"> {
+/** What clients see. Decks and queued sales are hidden (deck counts are public). */
+export interface GameSnapshot extends Omit<GameState, "decks" | "seed" | "pendingSales"> {
   deckCounts: Record<Tier, number>;
 }
 

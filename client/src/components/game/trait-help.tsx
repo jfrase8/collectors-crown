@@ -24,7 +24,7 @@ const TRAIT_HELP: Record<TraitId, string> = {
   appreciation: `Gains ${perTier("appreciationPerRound")} (Tier I/II/III) in value at the end of every round.`,
   collection: `Gains ${perTier("collectionBonusPerMatch")} (Tier I/II/III) for each collectible you own in its category, including itself.`,
   set: "Part of a 3-card set. Value is multiplied by the number of set cards you own.",
-  rarity: `At final scoring, gains ${perTier("rarityBonusPerOpponent")} (Tier I/II/III) for every opponent who owns zero Rare collectibles.`,
+  rarity: `Gains ${perTier("rarityBonusPerOpponent")} (Tier I/II/III) for every opponent who owns zero Rare collectibles; the bonus shrinks as opponents collect their own Rares.`,
   pairing: `Gains ${perTier("pairingBonus")} (Tier I/II/III) if you own at least one collectible of its paired category.`,
 }
 
