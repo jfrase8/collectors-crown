@@ -27,6 +27,8 @@ export interface CollectibleDefinition {
   traitDescription: string;
   /** Only on `set` trait cards: the 3-card set this belongs to. */
   setId?: SetId;
+  /** Only on `set` trait cards: display name of the set. */
+  setName?: string;
   /** Only on `pairing` trait cards: the category that triggers the bonus. */
   pairedCategory?: Category;
 }

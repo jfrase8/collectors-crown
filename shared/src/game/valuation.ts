@@ -42,8 +42,10 @@ const TRAIT_VALUATIONS: Record<TraitId, TraitValuation> = {
     // every card in currentValue below.
   },
   collection: {
+    // The card itself doesn't count — only other items in the same category.
     flatBonus: ({ card, owner }) =>
-      TIER_CONFIG[card.tier].collectionBonusPerMatch * countInCategory(owner, card.category),
+      TIER_CONFIG[card.tier].collectionBonusPerMatch *
+      Math.max(0, countInCategory(owner, card.category) - 1),
   },
   set: {
     multiplier: ({ card, owner }) =>

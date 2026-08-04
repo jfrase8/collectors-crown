@@ -19,7 +19,7 @@ export interface TierConfig {
   printedValues: { min: number; max: number };
   /** Added to `currentAppreciation` each End of Round (Appreciation trait). */
   appreciationPerRound: number;
-  /** Per owned collectible in the same category, including itself (Collection trait). */
+  /** Per other owned collectible in the same category, excluding itself (Collection trait). */
   collectionBonusPerMatch: number;
   /** Per opponent owning zero Rare collectibles, applied live (Rarity trait). */
   rarityBonusPerOpponent: number;

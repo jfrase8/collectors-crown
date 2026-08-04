@@ -1,6 +1,7 @@
 import {
   getCard,
   type Category,
+  type CollectibleDefinition,
   type CollectibleId,
   type Tier,
 } from "@collectors-crown/shared"
@@ -33,6 +34,13 @@ export const TRAIT_LABEL: Record<string, string> = {
   set: "Set",
   rarity: "Rare",
   pairing: "Historical Pairing",
+}
+
+/** "Set - Minted Legends" for set cards; the plain trait label otherwise. */
+function traitLabel(def: CollectibleDefinition): string {
+  return def.trait === "set" && def.setName
+    ? `Set - ${def.setName}`
+    : TRAIT_LABEL[def.trait]
 }
 
 interface CollectibleCardProps {
@@ -73,7 +81,7 @@ export function CollectibleCard({
           <CategoryIcon width={16} height={16} />
         </span>
         <h3 className={styles.name()}>{def.name}</h3>
-        <span className={styles.traitIcon()} title={TRAIT_LABEL[def.trait]}>
+        <span className={styles.traitIcon()} title={traitLabel(def)}>
           <TraitIcon width={16} height={16} />
         </span>
         <span className={styles.value()} title="Current value">
@@ -124,7 +132,7 @@ export function CollectibleCard({
         <span className="text-primary" aria-hidden>
           <TraitIcon width={18} height={18} />
         </span>
-        <span className={styles.traitLabel()}>{TRAIT_LABEL[def.trait]}</span>
+        <span className={styles.traitLabel()}>{traitLabel(def)}</span>
         <span className={styles.traitTooltip()} role="tooltip">
           {def.traitDescription}
         </span>

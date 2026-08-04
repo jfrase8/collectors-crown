@@ -10,8 +10,9 @@ import type {
 // Placeholder card catalog: 30 cards per tier, 6 categories × 5 cards.
 // Per tier each category gets one card of each trait (appreciation,
 // collection, set, rarity, pairing), so traits and categories are evenly
-// distributed. Set cards form two 3-card sets per tier. All names, values,
-// and descriptions are generic filler until real card data exists.
+// distributed. Each category's set cards across Tiers 1/2/3 form one named
+// 3-card set (6 sets total). All names, values, and descriptions are generic
+// filler until real card data exists.
 
 export const CATEGORIES: readonly Category[] = [
   "Coins",
@@ -29,6 +30,16 @@ const TRAITS: readonly TraitId[] = [
   "rarity",
   "pairing",
 ]
+
+/** Display names for the 3-card sets; one per category, spanning all tiers. */
+export const SET_NAMES: Record<Category, string> = {
+  Coins: "Minted Legends",
+  Stamps: "Postal Pioneers",
+  Paintings: "Gallery Masters",
+  Watches: "Timekeepers",
+  Comics: "Hero Sagas",
+  Relics: "Lost Empires",
+}
 
 const TIER_LABEL: Record<Tier, string> = {
   1: "Curious",
@@ -55,11 +66,11 @@ const CARD_NAMES: Record<Tier, Record<Category, Record<TraitId, string>>> = {
       pairing: "Pony Express",
     },
     Paintings: {
-      appreciation: "Harbor Study",
-      collection: "Still Life",
-      set: "Seasons Panel",
-      rarity: "Lost Miniature",
-      pairing: "Salon Portrait",
+      appreciation: "Morning at Willow Bridge",
+      collection: "Garden in Bloom",
+      set: "Autumn at Briar Lake",
+      rarity: "Blue Heron's Song",
+      pairing: "Lanterns After Rain",
     },
     Watches: {
       appreciation: "Conductor's Watch",
@@ -99,11 +110,11 @@ const CARD_NAMES: Record<Tier, Record<Category, Record<TraitId, string>>> = {
       pairing: "Perot Provisional",
     },
     Paintings: {
-      appreciation: "Venetian Canal",
-      collection: "Dutch Interior",
-      set: "Baroque Triptych",
-      rarity: "Signed Nocturne",
-      pairing: "Court Portrait",
+      appreciation: "Crimson Observatory",
+      collection: "The Silent Cartographer",
+      set: "Veil of the Silver Queen",
+      rarity: "Ashes of the Phoenix King",
+      pairing: "Echoes Beneath Ivory Skies",
     },
     Watches: {
       appreciation: "Gold Chronometer",
@@ -143,11 +154,11 @@ const CARD_NAMES: Record<Tier, Record<Category, Record<TraitId, string>>> = {
       pairing: "Z Grill",
     },
     Paintings: {
-      appreciation: "Gilded Madonna",
-      collection: "Storm at Sea",
-      set: "Muse Cycle",
-      rarity: "Master's Secret",
-      pairing: "Royal Commission",
+      appreciation: "Ninth Horizon",
+      collection: "Last Color",
+      set: "Whispers Beyond Creation",
+      rarity: "Crown of Eternity",
+      pairing: "Final Dawn",
     },
     Watches: {
       appreciation: "Perpetual Calendar",
@@ -183,7 +194,7 @@ function traitDescription(
     case "appreciation":
       return `Gains $${cfg.appreciationPerRound} in value at the end of every round.`
     case "collection":
-      return `Gains $${cfg.collectionBonusPerMatch} for each collectible you own in its category (including itself).`
+      return `Gains $${cfg.collectionBonusPerMatch} for each other collectible you own in its category.`
     case "set":
       return "Part of a 3-card set. Value is multiplied by the number of set cards you own."
     case "rarity":
@@ -209,11 +220,10 @@ function buildCatalog(): CollectibleDefinition[] {
           trait === "pairing"
             ? CATEGORIES[(CATEGORIES.indexOf(category) + 1) % CATEGORIES.length]
             : undefined
-        // Two 3-card sets per tier: categories 0-2 form set A, 3-5 set B.
+        // One set per category, spanning tiers: its set cards from
+        // Tiers 1, 2, and 3 belong together.
         const setId =
-          trait === "set"
-            ? `t${tier}-set-${CATEGORIES.indexOf(category) < 3 ? "a" : "b"}`
-            : undefined
+          trait === "set" ? `set-${category.toLowerCase()}` : undefined
         cards.push({
           id,
           name: CARD_NAMES[tier][category][trait],
@@ -223,7 +233,7 @@ function buildCatalog(): CollectibleDefinition[] {
           printedValue,
           historicalDescription: `A placeholder ${category.toLowerCase()} artifact from the ${TIER_LABEL[tier].toLowerCase()} era.`,
           traitDescription: traitDescription(trait, tier, pairedCategory),
-          ...(setId ? { setId } : {}),
+          ...(setId ? { setId, setName: SET_NAMES[category] } : {}),
           ...(pairedCategory ? { pairedCategory } : {}),
         })
         indexInTier++
