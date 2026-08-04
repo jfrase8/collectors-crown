@@ -2,7 +2,7 @@ import {
   TIER_CONFIG,
   tierForRound,
   TIER_NAMES,
-  TOTAL_ROUNDS,
+  totalRounds,
   type GameAction,
   type GameSnapshot,
   type PlayerId,
@@ -63,7 +63,7 @@ export function GameScreen({ myPlayerId }: GameScreenProps) {
       setInterstitial({
         kind: "income",
         round: game.round,
-        amount: TIER_CONFIG[tierForRound(game.round)].income,
+        amount: TIER_CONFIG[tierForRound(game.round, game.players.length)].income,
       })
     } else if (prev.phase === "market" && game.phase === "auction" && game.round === prev.round + 1) {
       const prevMe = prev.players.find((p) => p.id === myPlayerId)
@@ -104,7 +104,7 @@ export function GameScreen({ myPlayerId }: GameScreenProps) {
     })
   }
 
-  const tier = tierForRound(game.round)
+  const tier = tierForRound(game.round, game.players.length)
   const activeSeat = game.phase === "auction" && game.auction ? game.auction.turnSeat : null
   const isMyTurn = activeSeat !== null && game.players[activeSeat]?.id === myPlayerId
 
@@ -114,7 +114,7 @@ export function GameScreen({ myPlayerId }: GameScreenProps) {
       <TraitHelp />
       <header className={header()}>
         <p className={eyebrow()}>
-          Round {game.round} of {TOTAL_ROUNDS}
+          Round {game.round} of {totalRounds(game.players.length)}
         </p>
         <h1 className={tierTitle()}>{TIER_NAMES[tier]}</h1>
         <TurnRibbon game={game} myPlayerId={myPlayerId} />

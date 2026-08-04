@@ -1,5 +1,5 @@
 import type { PlayerId } from "../types.js";
-import { cardsForTier, getCard } from "./cards.js";
+import { CATEGORIES, cardsForTier, getCard } from "./cards.js";
 import {
   auctionRevealCount,
   BID_INCREMENT,
@@ -10,8 +10,9 @@ import {
   MIN_GAME_PLAYERS,
   STARTING_CASH,
   TIER_CONFIG,
+  tierDeckComposition,
   tierForRound,
-  TOTAL_ROUNDS,
+  totalRounds,
 } from "./constants.js";
 import { CHARACTERS } from "./characters.js";
 import { createRng, shuffle } from "./rng.js";
@@ -43,6 +44,23 @@ export function createGame(gameId: string, players: NewGamePlayer[], seed: numbe
     throw new Error(`Player count must be ${MIN_GAME_PLAYERS}–${MAX_GAME_PLAYERS}.`);
   }
   const rng = createRng(seed);
+
+  // Pick the game's sets once so their cards appear in every tier's deck;
+  // each tier deck is those set cards plus random non-set fillers.
+  const { setCards, fillerCards } = tierDeckComposition(players.length);
+  const setCategories = shuffle([...CATEGORIES], rng).slice(0, setCards);
+  const buildTierDeck = (tier: 1 | 2 | 3): CollectibleId[] => {
+    const tierCards = cardsForTier(tier);
+    const sets = tierCards.filter(
+      (c) => c.trait === "set" && setCategories.includes(c.category),
+    );
+    const fillers = shuffle(
+      tierCards.filter((c) => c.trait !== "set"),
+      rng,
+    ).slice(0, fillerCards);
+    return shuffle([...sets, ...fillers], rng).map((c) => c.id);
+  };
+
   const gamePlayers: GamePlayer[] = players.map((p, i) => ({
     id: p.id,
     name: p.name,
@@ -62,9 +80,9 @@ export function createGame(gameId: string, players: NewGamePlayer[], seed: numbe
     auction: null,
     purchasesThisPhase: {},
     decks: {
-      1: shuffle(cardsForTier(1), rng).map((c) => c.id),
-      2: shuffle(cardsForTier(2), rng).map((c) => c.id),
-      3: shuffle(cardsForTier(3), rng).map((c) => c.id),
+      1: buildTierDeck(1),
+      2: buildTierDeck(2),
+      3: buildTierDeck(3),
     },
     discard: [],
     marketDone: [],
@@ -134,11 +152,11 @@ function fail(error: string): ActionResult {
 function startAuctionPhase(state: GameState) {
   state.phase = "auction";
   state.purchasesThisPhase = {};
-  const deck = state.decks[tierForRound(state.round)];
+  const deck = state.decks[tierForRound(state.round, state.players.length)];
   const revealCount = Math.min(auctionRevealCount(state.players.length), deck.length);
   const revealed = deck.splice(0, revealCount);
 
-  if (isGrandAuctionRound(state.round)) {
+  if (isGrandAuctionRound(state.round, state.players.length)) {
     const grand: GrandAuctionState = {
       kind: "grand",
       cards: revealed,
@@ -173,7 +191,7 @@ function startAuctionPhase(state: GameState) {
 
 function endAuctionPhase(state: GameState) {
   state.auction = null;
-  if (state.round === TOTAL_ROUNDS) {
+  if (state.round === totalRounds(state.players.length)) {
     // End of game: no income, no market — only appreciation, then scoring.
     applyAppreciation(state);
     state.phase = "finished";
@@ -181,7 +199,7 @@ function endAuctionPhase(state: GameState) {
     return;
   }
   // Income Phase is automatic, then the Market Phase opens.
-  const income = TIER_CONFIG[tierForRound(state.round)].income;
+  const income = TIER_CONFIG[tierForRound(state.round, state.players.length)].income;
   for (const p of state.players) p.cash += income;
   state.phase = "market";
   state.marketDone = [];

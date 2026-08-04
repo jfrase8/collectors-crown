@@ -4,10 +4,14 @@ export const STARTING_CASH = 1000;
 export const MIN_GAME_PLAYERS = 3;
 export const MAX_GAME_PLAYERS = 5;
 
-export const TOTAL_ROUNDS = 12;
-export const ROUNDS_PER_TIER = 4;
-/** Grand auctions happen on the last round of each tier. */
-export const GRAND_AUCTION_ROUNDS = [4, 8, 12] as const;
+/** 3 players play 4 rounds per tier; 4–5 players play 3. */
+export function roundsPerTier(playerCount: number): number {
+  return playerCount === 3 ? 4 : 3;
+}
+
+export function totalRounds(playerCount: number): number {
+  return roundsPerTier(playerCount) * 3;
+}
 
 export const MAX_PURCHASES_PER_AUCTION_PHASE = 2;
 export const GRAND_AUCTION_BIDS_PER_PLAYER = 5;
@@ -15,7 +19,6 @@ export const BID_INCREMENT = 100;
 
 /** Every tier-dependent number in the rules, in one table. */
 export interface TierConfig {
-  deckSize: number;
   printedValues: { min: number; max: number };
   /** Added to `currentAppreciation` each End of Round (Appreciation trait). */
   appreciationPerRound: number;
@@ -37,7 +40,6 @@ export const TIER_NAMES: Record<Tier, string> = {
 
 export const TIER_CONFIG: Record<Tier, TierConfig> = {
   1: {
-    deckSize: 30,
     printedValues: { min: 100, max: 300 },
     appreciationPerRound: 100,
     collectionBonusPerMatch: 100,
@@ -46,7 +48,6 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
     income: 200,
   },
   2: {
-    deckSize: 30,
     printedValues: { min: 500, max: 800 },
     appreciationPerRound: 300,
     collectionBonusPerMatch: 300,
@@ -55,7 +56,6 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
     income: 500,
   },
   3: {
-    deckSize: 30,
     printedValues: { min: 1000, max: 1200 },
     appreciationPerRound: 800,
     collectionBonusPerMatch: 500,
@@ -65,16 +65,31 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
   },
 };
 
-export function tierForRound(round: number): Tier {
-  if (round <= 4) return 1;
-  if (round <= 8) return 2;
+export function tierForRound(round: number, playerCount: number): Tier {
+  const perTier = roundsPerTier(playerCount);
+  if (round <= perTier) return 1;
+  if (round <= perTier * 2) return 2;
   return 3;
 }
 
-export function isGrandAuctionRound(round: number): boolean {
-  return (GRAND_AUCTION_ROUNDS as readonly number[]).includes(round);
+/** Grand auctions happen on the last round of each tier. */
+export function isGrandAuctionRound(round: number, playerCount: number): boolean {
+  return round % roundsPerTier(playerCount) === 0;
 }
 
 export function auctionRevealCount(playerCount: number): number {
   return playerCount * 2 - 2;
+}
+
+/**
+ * Each tier's deck holds one set card per chosen set (one set per player)
+ * plus random non-set fillers, sized so the deck is exactly consumed:
+ * 3p → 3+13=16, 4p → 4+14=18, 5p → 5+19=24.
+ */
+export function tierDeckComposition(playerCount: number): {
+  setCards: number;
+  fillerCards: number;
+} {
+  const deckSize = auctionRevealCount(playerCount) * roundsPerTier(playerCount);
+  return { setCards: playerCount, fillerCards: deckSize - playerCount };
 }
